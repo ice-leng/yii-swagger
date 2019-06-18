@@ -8,6 +8,8 @@ namespace lengbin\swagger;
 
 use Yii;
 use yii\base\Action;
+use yii\base\UserException;
+use yii\helpers\Json;
 use yii\web\Response;
 
 /**
@@ -21,7 +23,7 @@ use yii\web\Response;
  *             'url' => Url::to(['doc/api'], true),
  *             'urls' => [
  *                          Url::to(['doc/api'], true),
- *                          Url::to(['doc/api2'], true),
+ *                          ['name' => 'xx', 'url' => Url::to(['doc/api2'], true)],
  *                       ],   // if more
  *             'httpAuth' => ['account' => 'password'], // http auth
  *         ]
@@ -77,6 +79,25 @@ class SwaggerAction extends Action
         }
     }
 
+    public function init()
+    {
+        parent::init();
+        if (!empty($this->urls)) {
+            if (!is_array($this->urls)) {
+                throw new UserException('Urls must array');
+            }
+            foreach ($this->urls as $key => $url) {
+                if (is_string($url)) {
+                    $this->urls[$key] = ['name' => $url, 'url' => $url];
+                } else {
+                    if (empty($url['url']) || empty($url['name'])) {
+                        throw new UserException('Urls format is invalid，format ["name" => "xxx", "url" => "xxx"]');
+                    }
+                }
+            }
+        }
+    }
+
     public function run()
     {
         $this->httpAuthCheck();
@@ -100,7 +121,7 @@ class SwaggerAction extends Action
 
         return $view->renderFile(__DIR__ . '/swagger.php', [
             'url'         => $this->url,
-            'urls'        => $this->urls,
+            'urls'        => Json::encode($this->urls),
             'oauthConfig' => $this->oauthConfiguration,
         ], $this->controller);
     }

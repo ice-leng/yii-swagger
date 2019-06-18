@@ -35,7 +35,7 @@
                 // Begin Swagger UI call region
                 const ui = SwaggerUIBundle({
                     url: "<?= $url?>",
-                    urls: "<?= $urls?>",
+                    urls: <?= $urls?>,
                     dom_id: '#swagger-ui',
                     deepLinking: true,
                     presets: [

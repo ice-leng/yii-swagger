@@ -50,7 +50,7 @@ public function actions()
             //if more url
             'urls' => [
                 \yii\helpers\Url::to(['/doc/api'], true),
-                \yii\helpers\Url::to(['/doc/api2'], true),
+                ['name' => 'api', 'url' => '\yii\helpers\Url::to(['/doc/api2'], true)'],
             ],
             //'httpAuth' => ['account' => 'password'], // http auth
         ],
