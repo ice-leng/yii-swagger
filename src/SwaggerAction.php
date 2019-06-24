@@ -70,7 +70,7 @@ class SwaggerAction extends Action
             exit;
         } else { // 如果登录了 php 会在 $_SERVER 中存储登录的帐号和密码
             $loginInfo = [$_SERVER['PHP_AUTH_USER'] => $_SERVER['PHP_AUTH_PW']];
-            if (!in_array($loginInfo, $this->httpAuth)) { // 检查用户名和密码
+            if ($loginInfo !== $this->httpAuth) {
                 header('WWW-Authenticate: Basic realm="My Private Stuff"');
                 header('HTTP/1.0 401 Unauthorized');
                 echo 'Authorization Required.';
