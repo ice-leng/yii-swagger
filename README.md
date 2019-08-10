@@ -47,6 +47,8 @@ public function actions()
         'doc' => [
             'class' => 'lengbin\swagger\SwaggerAction',
             'url' => \yii\helpers\Url::to(['/doc/api'], true),
+            // support swagger ui 2 and  3
+            'version' => \lengbin\swagger\SwaggerAction::SWAGGER_VERSION_DEFAULT,
             //if more url
             'urls' => [
                 \yii\helpers\Url::to(['/doc/api'], true),

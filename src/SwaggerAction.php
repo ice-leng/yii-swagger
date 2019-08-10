@@ -20,6 +20,7 @@ use yii\web\Response;
  *     return [
  *         'index' => [
  *             'class' => 'lengbin\swagger\SwaggerAction',
+ *             'version' => \lengbin\swagger\SwaggerAction::SWAGGER_VERSION_DEFAULT,
  *             'url' => Url::to(['doc/api'], true),
  *             'urls' => [
  *                          Url::to(['doc/api'], true),
@@ -33,6 +34,9 @@ use yii\web\Response;
  */
 class SwaggerAction extends Action
 {
+    const SWAGGER_VERSION_TWO = 2;
+    const SWAGGER_VERSION_DEFAULT = 3;
+
     /**
      * @var string The rest url configuration.
      */
@@ -47,6 +51,11 @@ class SwaggerAction extends Action
      * @var array  http auth  ['account' => 'password'],
      */
     public $httpAuth;
+
+    /**
+     * @var string swagger version , support 2, 3, default 3
+     */
+    public $version;
 
     /**
      * @var array The OAuth configration
@@ -96,6 +105,14 @@ class SwaggerAction extends Action
                 }
             }
         }
+        if ($this->version === null) {
+            $this->version = self::SWAGGER_VERSION_DEFAULT;
+        }
+
+        if (!empty($this->version) && !in_array($this->version, [self::SWAGGER_VERSION_DEFAULT, self::SWAGGER_VERSION_TWO])) {
+            throw new UserException('Swagger version support 2, 3');
+        }
+
     }
 
     public function run()
@@ -119,10 +136,11 @@ class SwaggerAction extends Action
             ];
         }
 
-        return $view->renderFile(__DIR__ . '/swagger.php', [
+        return $view->renderFile(__DIR__ . '/swagger' . $this->version . '.php', [
             'url'         => $this->url,
             'urls'        => Json::encode($this->urls),
             'oauthConfig' => $this->oauthConfiguration,
         ], $this->controller);
     }
+
 }
